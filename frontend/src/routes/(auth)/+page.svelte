@@ -1,5 +1,6 @@
 <script lang="ts">
   import { invalidate } from '$app/navigation'
+  import { PUBLIC_COLLEGE_NAME } from '$env/static/public'
   import ky from '$lib/api/ky'
   import Button from '$lib/lunaria/Button.svelte'
   import TextInput from '$lib/lunaria/TextInput.svelte'
@@ -16,7 +17,7 @@
       const res = await ky
         .post(`api/login`, { json: login })
         .json<{ token: string; username: string }>()
-      localStorage.setItem('concinnity:token', res.token)
+      localStorage.setItem('fomalhaut:token', res.token)
       error = ''
     } catch (e: unknown) {
       error = e instanceof Error ? e.message : (e?.toString() ?? `Failed to login!`)
@@ -28,7 +29,12 @@
   }
 </script>
 
-<h2>Login</h2>
+<img
+  class="center logo"
+  src="https://em-content.zobj.net/source/apple/391/doughnut_1f369.png"
+  alt="Logo"
+/>
+<h2 class="center">Login to My {PUBLIC_COLLEGE_NAME}</h2>
 <div class="spacer"></div>
 <label for="login-username">E-mail / Username</label>
 <TextInput
@@ -51,9 +57,9 @@
   onkeypress={e => e.key === 'Enter' && onLogin() /* eslint-disable-line */}
 />
 {#if error === ''}
-  <p class="result">Logged in successfully! You should be redirected shortly...</p>
+  <p class="center result">Logged in successfully! You should be redirected shortly...</p>
 {:else if !!error}
-  <p class="result error">{error}</p>
+  <p class="center result error">{error}</p>
 {/if}
 <div class="spacer"></div>
 <Button {disabled} onclick={onLogin}>Login</Button>

@@ -35,12 +35,14 @@
       font-weight: bold;
     }
 
-    :global(p) {
-      align-self: center;
+    :global(.logo) {
+      aspect-ratio: 1 / 1;
+      height: 6rem;
+      margin-bottom: 1rem;
     }
 
-    :global(.left-align) {
-      align-self: flex-start;
+    :global(.center) {
+      align-self: center;
     }
 
     :global(.spacer) {
