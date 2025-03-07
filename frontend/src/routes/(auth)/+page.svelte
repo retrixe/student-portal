@@ -29,11 +29,7 @@
   }
 </script>
 
-<img
-  class="center logo"
-  src="https://em-content.zobj.net/source/apple/391/doughnut_1f369.png"
-  alt="Logo"
-/>
+<img class="center logo" src="/favicon.png" alt="Logo" />
 <h2 class="center">Login to My {PUBLIC_COLLEGE_NAME}</h2>
 <div class="spacer"></div>
 <label for="login-username">E-mail / Username</label>

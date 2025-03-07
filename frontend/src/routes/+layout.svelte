@@ -47,14 +47,14 @@
     }
 
     :root {
-      --primary-color: #8f00ff;
+      --primary-color: #0080ff;
       --error-color: #ff0042;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
         color-scheme: dark;
-        --link-color: #df73ff;
+        --link-color: #00bfff;
         --background-color: #0e0e10; /* Jet black */
         --surface-color: #1b1b1b; /* Eerie black */
         --color: #ffffff;
@@ -67,7 +67,7 @@
 
     @media (prefers-color-scheme: light) {
       :root {
-        --link-color: #8f00ff;
+        --link-color: #0080ff;
         --background-color: #f5f5f5; /* White smoke */
         --surface-color: #fcfcfc; /* White smoke but brighter */
         --color: #000000;
