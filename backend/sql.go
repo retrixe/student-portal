@@ -16,6 +16,11 @@ CREATE TABLE IF NOT EXISTS users (
 	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 	verified BOOLEAN NOT NULL DEFAULT FALSE);
 
+CREATE TABLE IF NOT EXISTS tokens (
+	token VARCHAR(128) NOT NULL PRIMARY KEY,
+	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	user_id UUID NOT NULL REFERENCES users(id));
+
 COMMIT;`); err != nil {
 		log.Fatalln("Failed to create tables and indexes!", err)
 	}
