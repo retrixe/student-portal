@@ -71,7 +71,7 @@
         <CalendarX weight="bold" size="24px" /> Attendance
       </Button>
     </a>
-    <a href="/portal/fees">
+    <a href="/portal/fees/pending">
       <Button>
         <CurrencyInr weight="bold" size="24px" /> Fees
       </Button>

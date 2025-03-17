@@ -11,8 +11,8 @@ interface PageData {
 
 export const load: PageServerLoad<PageData> = () => {
   return {
-    title: 'Student Portal - My ' + env.PUBLIC_COLLEGE_NAME,
+    title: 'Pending Fee Payments - Student Portal - My ' + env.PUBLIC_COLLEGE_NAME,
     image: '/favicon.png',
-    description: 'Your portal to My ' + env.PUBLIC_COLLEGE_NAME + '.',
+    description: 'Pending fee payments on your portal to My ' + env.PUBLIC_COLLEGE_NAME + '.',
   }
 }
