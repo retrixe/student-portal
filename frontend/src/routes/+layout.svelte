@@ -2,11 +2,10 @@
   import { assets } from '$app/paths'
   import { page } from '$app/state'
   import type { Snippet } from 'svelte'
-  import type { LayoutData } from './$types'
   import { onNavigate } from '$app/navigation'
   import '$lib/lunaria/Baseline.scss'
 
-  const { children }: { data: LayoutData; children: Snippet } = $props()
+  const { children }: { children: Snippet } = $props()
   const { title, description, image, imageLarge, noIndex } = $derived(page.data)
 
   onNavigate(navigation => {
