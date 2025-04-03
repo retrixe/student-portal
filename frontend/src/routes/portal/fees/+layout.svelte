@@ -9,10 +9,10 @@
 
 <Box class="page-container">
   <Tabs>
-    <Tab>Pending Fees</Tab>
+    <Tab href="/portal/fees">Pending Fees</Tab>
     <div style:flex="1"></div>
-    <Tab>Cart (4)</Tab>
-    <Tab>Receipts</Tab>
+    <Tab href="/portal/fees/cart">Cart (4)</Tab>
+    <Tab href="/portal/fees/receipts">Receipts</Tab>
   </Tabs>
   <br />
   {@render children()}
