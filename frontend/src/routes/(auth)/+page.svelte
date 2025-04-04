@@ -17,7 +17,7 @@
       const res = await ky
         .post(`api/login`, { json: login })
         .json<{ token: string; username: string }>()
-      localStorage.setItem('fomalhaut:token', res.token)
+      localStorage.setItem('student-portal:token', res.token)
       error = ''
     } catch (e: unknown) {
       error = e instanceof Error ? e.message : (e?.toString() ?? `Failed to login!`)

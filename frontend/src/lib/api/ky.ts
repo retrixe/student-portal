@@ -5,7 +5,7 @@ const ky = kyLibrary.create({
   prefixUrl: PUBLIC_BACKEND_URL,
   hooks: {
     beforeRequest: [
-      req => req.headers.set('Authorization', localStorage.getItem('fomalhaut:token') ?? ''),
+      req => req.headers.set('Authorization', localStorage.getItem('student-portal:token') ?? ''),
     ],
     beforeError: [
       async error => {
@@ -13,7 +13,7 @@ const ky = kyLibrary.create({
           // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           const data = await error.response?.json<{ error?: string }>()
           if (data.error) {
-            error.name = 'FomalhautError'
+            error.name = 'StudentPortalError'
             error.message = data.error
           }
           // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -24,7 +24,7 @@
     event.preventDefault()
     try {
       await ky.post('api/logout')
-      localStorage.removeItem('fomalhaut:token')
+      localStorage.removeItem('student-portal:token')
       invalidate('app:auth').catch(console.error)
     } catch (error) {
       alert('Failed to logout!')
