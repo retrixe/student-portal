@@ -8,20 +8,14 @@ import (
 func CreateSqlTables() {
 	if _, err := db.Exec(`BEGIN;
 
-CREATE TABLE IF NOT EXISTS users (
-	username VARCHAR(16) NOT NULL UNIQUE,
-	password VARCHAR(100) NOT NULL,
-	email VARCHAR(319) NOT NULL UNIQUE,
-	id UUID NOT NULL PRIMARY KEY,
-	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-	verified BOOLEAN NOT NULL DEFAULT FALSE);
-
 CREATE TABLE IF NOT EXISTS tokens (
-	token VARCHAR(128) NOT NULL PRIMARY KEY,
-	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-	user_id UUID NOT NULL REFERENCES users(id));
+    token VARCHAR(128) NOT NULL PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    prn BIGINT NOT NULL REFERENCES students(prn)
+);
 
-CREATE TABLE students (
+
+CREATE TABLE IF NOT EXISTS students (
     prn BIGINT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     aadhaarNo VARCHAR(12) NOT NULL,
@@ -36,7 +30,7 @@ CREATE TABLE students (
     address VARCHAR(1000) NOT NULL
 );
 
-CREATE TABLE guardians (
+CREATE TABLE IF NOT EXISTS guardians (
     id BIGINT PRIMARY KEY,
     email VARCHAR(100) NOT NULL,
     profession VARCHAR(30) NOT NULL,
@@ -47,7 +41,7 @@ CREATE TABLE guardians (
     FOREIGN KEY (prn) REFERENCES students(prn)
 );
 
-CREATE TABLE serviceRequest (
+CREATE TABLE IF NOT EXISTS serviceRequest (
     id INT PRIMARY KEY,
     creationTime DATETIME NOT NULL,
     prn BIGINT NOT NULL,
@@ -60,7 +54,7 @@ CREATE TABLE serviceRequest (
     FOREIGN KEY (prn) REFERENCES students(prn)
 );
 
-CREATE TABLE serviceRequestReplies (
+CREATE TABLE IF NOT EXISTS serviceRequestReplies (
     id INT PRIMARY KEY,
     requestid INT NOT NULL,
     time DATETIME NOT NULL,
@@ -70,14 +64,14 @@ CREATE TABLE serviceRequestReplies (
     FOREIGN KEY (prn) REFERENCES students(prn)
 );
 
-CREATE TABLE programs (
+CREATE TABLE IF NOT EXISTS programs (
     code VARCHAR(30) PRIMARY KEY,
     degree VARCHAR(30) NOT NULL,
     major VARCHAR(30) NOT NULL,
     fees BIGINT NOT NULL
 );
 
-CREATE TABLE courses (
+CREATE TABLE IF NOT EXISTS courses (
     code VARCHAR(16) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     department VARCHAR(100) NOT NULL,
@@ -86,7 +80,7 @@ CREATE TABLE courses (
     semester INT NOT NULL
 );
 
-CREATE TABLE enrollments (
+CREATE TABLE IF NOT EXISTS enrollments (
     courseCode VARCHAR(16),
     prn BIGINT,
     attempts INT NOT NULL,
@@ -100,7 +94,7 @@ CREATE TABLE enrollments (
     FOREIGN KEY (prn) REFERENCES students(prn)
 );
 
-CREATE TABLE receipts (
+CREATE TABLE IF NOT EXISTS receipts (
     id INT PRIMARY KEY,
     prn BIGINT NOT NULL,
     ipAddress VARBINARY(16) NOT NULL,
@@ -110,7 +104,7 @@ CREATE TABLE receipts (
     FOREIGN KEY (prn) REFERENCES students(prn)
 );
 
-CREATE TABLE receiptItems (
+CREATE TABLE IF NOT EXISTS receiptItems (
     receiptId INT,
     item VARCHAR(64),
     quantity INT NOT NULL,
@@ -119,7 +113,7 @@ CREATE TABLE receiptItems (
     FOREIGN KEY (receiptId) REFERENCES receipts(id)
 );
 
-CREATE TABLE internalAssessments (
+CREATE TABLE IF NOT EXISTS internalAssessments (
     courseCode VARCHAR(16),
     prn BIGINT,
     name VARCHAR(30) NOT NULL,
@@ -130,21 +124,21 @@ CREATE TABLE internalAssessments (
     FOREIGN KEY (prn) REFERENCES students(prn)
 );
 
-CREATE TABLE circulars (
+CREATE TABLE IF NOT EXISTS circulars (
     id INT PRIMARY KEY,
     date DATE NOT NULL,
     subject VARCHAR(100) NOT NULL,
     description VARCHAR(5000) NOT NULL
 );
 
-CREATE TABLE holidays (
+CREATE TABLE IF NOT EXISTS holidays (
     name VARCHAR(30) PRIMARY KEY,
     start DATE NOT NULL,
     end DATE NOT NULL,
     type VARCHAR(30) NOT NULL
 );
 
-CREATE TABLE lectures (
+CREATE TABLE IF NOT EXISTS lectures (
     id INT PRIMARY KEY,
     courseCode VARCHAR(16) NOT NULL,
     room VARCHAR(20) NOT NULL,
@@ -154,7 +148,7 @@ CREATE TABLE lectures (
     FOREIGN KEY (courseCode) REFERENCES courses(code)
 );
 
-CREATE TABLE attendance (
+CREATE TABLE IF NOT EXISTS attendance (
     prn BIGINT,
     lectureId INT,
     timing VARCHAR(32),
@@ -164,7 +158,6 @@ CREATE TABLE attendance (
     FOREIGN KEY (prn) REFERENCES students(prn),
     FOREIGN KEY (lectureId) REFERENCES lectures(id)
 );
-
 
 COMMIT;`); err != nil {
 		log.Fatalln("Failed to create tables and indexes!", err)
