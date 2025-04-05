@@ -13,4 +13,5 @@ module.exports = {
   jsxSingleQuote: true,
   arrowParens: 'avoid',
   printWidth: 100,
+  endOfLine: 'auto',
 }

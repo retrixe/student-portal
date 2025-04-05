@@ -13,6 +13,13 @@
   </Box>
 </div>
 
+<!--
+TODO:
+- Upcoming Holidays / Events
+- Due Fees
+- Attendance Summary
+-->
+
 <style>
   .container {
     flex: 1;
