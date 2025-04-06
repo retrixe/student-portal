@@ -8,13 +8,6 @@ import (
 func CreateSqlTables() {
 	if _, err := db.Exec(`BEGIN;
 
-CREATE TABLE IF NOT EXISTS tokens (
-    token VARCHAR(128) NOT NULL PRIMARY KEY,
-
-    password VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS students (
     prn BIGINT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -28,6 +21,12 @@ CREATE TABLE IF NOT EXISTS students (
     programCode VARCHAR(16) NOT NULL,
     phoneNo VARCHAR(100) NOT NULL,
     address VARCHAR(1000) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS tokens (
+    token VARCHAR(128) NOT NULL PRIMARY KEY,
+    created_at DATETIME NOT NULL DEFAULT NOW(),
+    prn BIGINT NOT NULL REFERENCES students(prn)
 );
 
 CREATE TABLE IF NOT EXISTS guardians (
@@ -176,8 +175,8 @@ func PrepareSqlStatements() {
 	//findUserByTokenStmt = prepareQuery("SELECT username, password, email, prn, " +
 	//	"token, tokens.created_at FROM tokens " +
 	//	"JOIN students ON tokens.prn = students.prn WHERE token = ?;")
-	findUserByNameOrEmailStmt = prepareQuery("SELECT username, password, email, prn, created_at " +
-		"WHERE username = ? OR email = ? LIMIT 1;")
+	//findUserByNameOrEmailStmt = prepareQuery("SELECT username, password, email, prn, created_at " +
+	//	"WHERE username = ? OR email = ? LIMIT 1;")
 
 	insertTokenStmt = prepareQuery("INSERT INTO tokens (token, created_at, prn) VALUES (?, ?, ?);")
 	deleteTokenStmt = prepareQuery("DELETE FROM tokens WHERE token = ? RETURNING prn;")
