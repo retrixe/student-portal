@@ -10,10 +10,10 @@ func CreateSqlTables() {
 
 CREATE TABLE IF NOT EXISTS tokens (
     token VARCHAR(128) NOT NULL PRIMARY KEY,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    prn BIGINT NOT NULL REFERENCES students(prn)
-);
 
+    password VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS students (
     prn BIGINT PRIMARY KEY,
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS receipts (
     id INT PRIMARY KEY,
     prn BIGINT NOT NULL,
     ipAddress VARBINARY(16) NOT NULL,
-    purchaseTime TIMESTAMP NOT NULL,
+    purchaseTime DATETIME NOT NULL,
     total DECIMAL(10,3) NOT NULL,
     paymentSystemId VARCHAR(255),
     FOREIGN KEY (prn) REFERENCES students(prn)
@@ -173,14 +173,14 @@ var (
 )
 
 func PrepareSqlStatements() {
-	findUserByTokenStmt = prepareQuery("SELECT username, password, email, id, users.created_at " +
-		"AS user_created_at, verified, token, tokens.created_at AS token_created_at FROM tokens " +
-		"JOIN users ON tokens.user_id = users.id WHERE token = ?;")
-	findUserByNameOrEmailStmt = prepareQuery("SELECT username, password, email, id, created_at, verified FROM users " +
+	//findUserByTokenStmt = prepareQuery("SELECT username, password, email, prn, " +
+	//	"token, tokens.created_at FROM tokens " +
+	//	"JOIN students ON tokens.prn = students.prn WHERE token = ?;")
+	findUserByNameOrEmailStmt = prepareQuery("SELECT username, password, email, prn, created_at " +
 		"WHERE username = ? OR email = ? LIMIT 1;")
 
-	insertTokenStmt = prepareQuery("INSERT INTO tokens (token, created_at, user_id) VALUES (?, ?, ?);")
-	deleteTokenStmt = prepareQuery("DELETE FROM tokens WHERE token = ? RETURNING user_id;")
+	insertTokenStmt = prepareQuery("INSERT INTO tokens (token, created_at, prn) VALUES (?, ?, ?);")
+	deleteTokenStmt = prepareQuery("DELETE FROM tokens WHERE token = ? RETURNING prn;")
 }
 
 func prepareQuery(query string) *sql.Stmt {
