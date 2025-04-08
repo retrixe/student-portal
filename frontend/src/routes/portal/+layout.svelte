@@ -84,9 +84,7 @@
     {/snippet}
   </NavigationRail>
 
-  <div class="container">
-    {@render children()}
-  </div>
+  {@render children()}
 </div>
 
 <style lang="scss">
