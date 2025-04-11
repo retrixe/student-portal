@@ -14,6 +14,7 @@
   }
 
   interface LandingData {
+    totalAttendance: number
     courseAttendance: {
       courseCode: string
       courseName: string
@@ -33,6 +34,7 @@
   }
 
   const request: Promise<LandingData> = Promise.resolve({
+    totalAttendance: 75,
     courseAttendance: [
       {
         courseCode: 'DAA',
@@ -65,6 +67,14 @@
     const endDate = dayjs(end).format('DD/MM/YYYY')
     return startDate === endDate ? startDate : `${startDate} - ${endDate}`
   }
+
+  const calculateAttendance = (attendedClasses: number, totalClasses: number): number => {
+    const percentage = (attendedClasses / totalClasses) * 100
+    return +percentage.toFixed(2)
+  }
+
+  const getAttendanceColor = (attendance: number): string =>
+    attendance < 75 ? 'red' : attendance < 80 ? 'yellow' : 'lime'
 </script>
 
 <div class="container">
@@ -86,19 +96,27 @@
     <Box class="card">
       <div class="space-between">
         <h1>Attendance Summary</h1>
-        <h1 style:color="yellow /* lime or red */">75%</h1>
+        <h1 style:color={getAttendanceColor(data.totalAttendance)}>
+          {data.totalAttendance}%
+        </h1>
       </div>
       <br />
       {#each data.courseAttendance as subject (subject.courseCode)}
         <div class="attendance-indicator">
           <p>{subject.courseName}</p>
           <ProgessBar
-            percentage={(subject.attendedClasses / subject.totalClasses) * 100}
-            color="yellow"
+            percentage={calculateAttendance(subject.attendedClasses, subject.totalClasses)}
+            color={getAttendanceColor(
+              calculateAttendance(subject.attendedClasses, subject.totalClasses),
+            )}
           />
           <p>
-            <span style:color="yellow"
-              >{+((subject.attendedClasses / subject.totalClasses) * 100).toFixed(2)}%
+            <span
+              style:color={getAttendanceColor(
+                calculateAttendance(subject.attendedClasses, subject.totalClasses),
+              )}
+            >
+              {calculateAttendance(subject.attendedClasses, subject.totalClasses)}%
             </span>
             ({subject.attendedClasses}/{subject.totalClasses})
           </p>
