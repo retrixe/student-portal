@@ -20,6 +20,7 @@
     "lint": "yarn check && eslint ."
   },
   "dependencies": {
+    "dayjs": "^1.11.13",
     "ky": "^1.7.5",
     "phosphor-svelte": "^3.0.1",
     "remarkable": "^2.0.1"

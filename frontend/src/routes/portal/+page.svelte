@@ -1,74 +1,159 @@
-<script>
+<script lang="ts">
   import Box from '$lib/lunaria/Box.svelte'
   import Button from '$lib/lunaria/Button.svelte'
   import ProgessBar from '$lib/lunaria/ProgessBar.svelte'
-  import { XCircle } from 'phosphor-svelte'
+  import dayjs from 'dayjs'
+  import { CheckCircle, WarningCircle, XCircle } from 'phosphor-svelte'
 
-  // FIXME: Make everything retrievable from the backend via functions i.e. reactive UI
+  const student = {
+    image: 'https://github.com/retrixe.png',
+    name: 'Ibrahim Ansari',
+    prn: '3929303209',
+    semester: 4,
+    branch: 'B.Tech CSE',
+  }
+
+  interface LandingData {
+    courseAttendance: {
+      courseCode: string
+      courseName: string
+      totalClasses: number
+      attendedClasses: number
+    }[]
+    pendingFees?: {
+      totalAmount: number
+      dueDate: string
+    }
+    holidays: {
+      name: string
+      start: string
+      end: string
+      type: string
+    }[]
+  }
+
+  const request: Promise<LandingData> = Promise.resolve({
+    courseAttendance: [
+      {
+        courseCode: 'DAA',
+        courseName: 'Design and Analysis of Algorithms',
+        totalClasses: 20,
+        attendedClasses: 15,
+      },
+    ],
+    pendingFees: {
+      totalAmount: 300000,
+      dueDate: '2025-05-12',
+    },
+    holidays: [
+      { name: 'Hackathon', start: '2024-02-12', end: '2024-02-14', type: 'national' },
+      { name: 'Project Submission', start: '2024-02-20', end: '2024-02-20', type: 'national' },
+      { name: 'Mid Sem Exams', start: '2024-02-25', end: '2024-02-25', type: 'national' },
+    ],
+  })
+
+  const formatNumber = (n: number) =>
+    n.toLocaleString('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      trailingZeroDisplay: 'stripIfInteger',
+      maximumFractionDigits: 2,
+    })
+
+  const formatDateRange = (start: Date, end: Date) => {
+    const startDate = dayjs(start).format('DD/MM/YYYY')
+    const endDate = dayjs(end).format('DD/MM/YYYY')
+    return startDate === endDate ? startDate : `${startDate} - ${endDate}`
+  }
 </script>
 
 <div class="container">
-  <Box class="card header">
-    <img class="user-avatar" src="https://github.com/retrixe.png" alt="logo" />
-    <div>
-      <h1>Ibrahim Ansari</h1>
-      <h3>PRN 3929303209</h3>
-      <h4>Semester 4</h4>
-      <h4>B.Tech CSE</h4>
-    </div>
-  </Box>
-
-  <Box class="card">
-    <div class="space-between">
-      <h1>Attendance Summary</h1>
-      <h1 style:color="yellow /* lime or red */">75%</h1>
-    </div>
-    <br />
-    <div class="attendance-indicator">
-      <p>Design and Analysis of Algorithms</p>
-      <ProgessBar percentage={75} color="yellow" />
-      <p>
-        <span style:color="yellow">75%</span> (15/20)
-      </p>
-    </div>
-  </Box>
-
-  <Box class="card header">
-    <!--
-      <CheckCircle size="64px" color="#90EE90" />
-      <h1>No pending fees</h1>
-    -->
-    <!--
-      <WarningCircle size="64px" color="#FFCC00" />
-      <div style:flex="1">
-        <h1>Pending fees</h1>
-        <h2>INR 3,00,000 due by May 12, 2025</h2>
+  {#await request}
+    <Box class="card">
+      <h1>Loading...</h1>
+    </Box>
+  {:then data}
+    <Box class="card header">
+      <img class="user-avatar" src={student.image} alt="logo" />
+      <div>
+        <h1>{student.name}</h1>
+        <h3>PRN {student.prn}</h3>
+        <h4>Semester {student.semester}</h4>
+        <h4>{student.branch}</h4>
       </div>
-    -->
-    <XCircle size="64px" color="red" />
-    <div style:flex="1">
-      <h1>Fee payment overdue!</h1>
-      <h2>INR 3,00,000 was due by May 12, 2025</h2>
-    </div>
-    <Button>Pay now</Button>
-  </Box>
+    </Box>
 
-  <Box class="card">
-    <!-- FIXME: This needs working on -->
-    <h1>Upcoming Events</h1>
-    <div class="space-between">
-      <h2>Hackathon</h2>
-      <h2>12 Feb 2024</h2>
-    </div>
-    <div class="space-between">
-      <h2>Project Submission</h2>
-      <h2>20 Feb 2024</h2>
-    </div>
-    <div class="space-between">
-      <h2>Mid Sem Exams</h2>
-      <h2>25 Feb 2024</h2>
-    </div>
-  </Box>
+    <Box class="card">
+      <div class="space-between">
+        <h1>Attendance Summary</h1>
+        <h1 style:color="yellow /* lime or red */">75%</h1>
+      </div>
+      <br />
+      {#each data.courseAttendance as subject (subject.courseCode)}
+        <div class="attendance-indicator">
+          <p>{subject.courseName}</p>
+          <ProgessBar
+            percentage={(subject.attendedClasses / subject.totalClasses) * 100}
+            color="yellow"
+          />
+          <p>
+            <span style:color="yellow"
+              >{+((subject.attendedClasses / subject.totalClasses) * 100).toFixed(2)}%
+            </span>
+            ({subject.attendedClasses}/{subject.totalClasses})
+          </p>
+        </div>
+      {/each}
+    </Box>
+
+    <Box class="card header">
+      {#if !data.pendingFees}
+        <CheckCircle size="64px" color="#90EE90" />
+        <h1>No pending fees</h1>
+      {:else}
+        {#if new Date(data.pendingFees.dueDate).getTime() > Date.now()}
+          <WarningCircle size="64px" color="#FFCC00" />
+          <div style:flex="1">
+            <h1>Pending fees</h1>
+            <h2>
+              {formatNumber(data.pendingFees.totalAmount)} due by {dayjs(
+                data.pendingFees.dueDate,
+              ).format('MMMM D, YYYY')}
+            </h2>
+          </div>
+        {:else}
+          <XCircle size="64px" color="red" />
+          <div style:flex="1">
+            <h1>Fee payment overdue!</h1>
+            <h2>
+              {formatNumber(data.pendingFees.totalAmount)} was due by {dayjs(
+                data.pendingFees.dueDate,
+              ).format('MMMM D, YYYY')}
+            </h2>
+          </div>
+        {/if}
+        <Button>Pay now</Button>
+      {/if}
+    </Box>
+
+    <Box class="card">
+      <h1>Upcoming Holidays</h1>
+      <br />
+      {#each data.holidays as event (event.name)}
+        <div class="space-between">
+          <h3>{event.name}</h3>
+          <h3>
+            {formatDateRange(new Date(event.start), new Date(event.end))}
+          </h3>
+        </div>
+      {/each}
+    </Box>
+  {:catch error}
+    <Box class="card">
+      <h1 style:color="red">An error occurred!</h1>
+      <h2>{error}</h2>
+    </Box>
+  {/await}
 </div>
 
 <style>
