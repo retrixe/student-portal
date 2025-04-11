@@ -157,14 +157,22 @@
     <Box class="card">
       <h1>Upcoming Holidays</h1>
       <br />
-      {#each data.holidays as event (event.name)}
-        <div class="space-between">
-          <h3>{event.name}</h3>
-          <h3>
-            {formatDateRange(new Date(event.start), new Date(event.end))}
-          </h3>
-        </div>
-      {/each}
+      {@const upcomingHolidays = data.holidays.filter(holiday => {
+        const timeDifference = new Date(holiday.start).getTime() - Date.now()
+        return timeDifference > 0 && timeDifference < 7 * 24 * 60 * 60 * 1000
+      })}
+      {#if upcomingHolidays.length}
+        {#each upcomingHolidays as holiday (holiday.name)}
+          <div class="space-between">
+            <h3>{holiday.name}</h3>
+            <h3>
+              {formatDateRange(new Date(holiday.start), new Date(holiday.end))}
+            </h3>
+          </div>
+        {/each}
+      {:else}
+        <h3>No upcoming holidays this week :(</h3>
+      {/if}
     </Box>
   {:catch error}
     <Box class="card">
