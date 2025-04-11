@@ -17,7 +17,7 @@
     <tbody>
       <tr class="item">
         <td class="action-cells">
-          <Button id="remove-btn"><X weight="bold" size="24px" /></Button>
+          <Button class="remove-btn"><X weight="bold" size="24px" /></Button>
         </td>
         <td>Tuition Fee</td>
         <td>2023-10-01</td>
@@ -25,7 +25,7 @@
       </tr>
       <tr class="item">
         <td class="action-cells">
-          <Button id="remove-btn"><X weight="bold" size="24px" /></Button>
+          <Button class="remove-btn"><X weight="bold" size="24px" /></Button>
         </td>
         <td>Library Fee</td>
         <td>2023-10-01</td>
@@ -68,10 +68,9 @@
     float: right;
   }
 
-  :global(#remove-btn) {
-    background-color: transparent;
-    padding: 4px;
-    cursor: pointer;
+  :global(.remove-btn) {
+    background-color: transparent !important;
+    padding: 4px !important;
     &:hover {
       color: red;
     }
