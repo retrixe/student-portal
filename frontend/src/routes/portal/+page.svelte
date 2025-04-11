@@ -150,7 +150,9 @@
             </h2>
           </div>
         {/if}
-        <Button>Pay now</Button>
+        <a href="/portal/fees">
+          <Button>Pay now</Button>
+        </a>
       {/if}
     </Box>
 
