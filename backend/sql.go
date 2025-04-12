@@ -165,8 +165,8 @@ COMMIT;`); err != nil {
 }
 
 var (
-	findUserByTokenStmt       *sql.Stmt
-	findUserByNameOrEmailStmt *sql.Stmt
+	findStudentByTokenStmt *sql.Stmt
+	findStudentByEmailStmt *sql.Stmt
 
 	insertTokenStmt *sql.Stmt
 	deleteTokenStmt *sql.Stmt
