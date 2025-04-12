@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS students (
     email VARCHAR(100) NOT NULL,
     programCode VARCHAR(16) NOT NULL,
     phoneNo VARCHAR(100) NOT NULL,
-    address VARCHAR(1000) NOT NULL
+    address VARCHAR(1000) NOT NULL,
+    picture BLOB NOT NULL,
 );
 
 CREATE TABLE IF NOT EXISTS tokens (

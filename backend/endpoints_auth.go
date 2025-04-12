@@ -15,103 +15,109 @@ import (
 
 var ErrNotAuthenticated = errors.New("request not authenticated")
 
-func IsAuthenticatedHTTP(w http.ResponseWriter, r *http.Request) (*User, *Token) {
-	user, token, err := IsAuthenticated(GetTokenFromHTTP(r))
+func IsAuthenticatedHTTP(w http.ResponseWriter, r *http.Request) (*Student, *Token) {
+	student, token, err := IsAuthenticated(GetTokenFromHTTP(r))
 	if errors.Is(err, ErrNotAuthenticated) {
 		http.Error(w, errorJson("You are not authenticated to access this resource!"),
 			http.StatusUnauthorized)
 	} else if err != nil {
 		handleInternalServerError(w, err)
 	}
-	return user, token
+	return student, token
 }
 
-func IsAuthenticated(token string) (*User, *Token, error) {
+func IsAuthenticated(token string) (*Student, *Token, error) {
 	if token == "" {
 		return nil, nil, ErrNotAuthenticated
 	}
 
-	user := User{}
+	student := Student{}
 	var tokenCreatedAt time.Time
-	err := findUserByTokenStmt.QueryRow(token).Scan(
-		&user.Username,
-		&user.Password,
-		&user.Email,
-		&user.ID,
-		&user.CreatedAt,
-		&user.Verified,
-		&token,
-		&tokenCreatedAt)
+	var studentID uuid.UUID
+	err := findStudentByTokenStmt.QueryRow(token).Scan(
+		&student.PRN,
+		&student.Name,
+		&student.Email,
+		&student.ProgramCode,
+		&student.PhoneNo,
+		&studentID,
+		&tokenCreatedAt,
+	)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil, ErrNotAuthenticated
 	} else if err != nil {
 		return nil, nil, err
 	} else {
-		return &user, &Token{CreatedAt: tokenCreatedAt, Token: token, UserID: user.ID}, nil
+		return &student, &Token{CreatedAt: tokenCreatedAt, Token: token, UserID: studentID}, nil
 	}
 }
 
 func StatusEndpoint(w http.ResponseWriter, r *http.Request) {
-	user, _, err := IsAuthenticated(GetTokenFromHTTP(r))
+	student, _, err := IsAuthenticated(GetTokenFromHTTP(r))
 	if errors.Is(err, ErrNotAuthenticated) {
 		w.Write([]byte("{\"online\":true,\"authenticated\":false}"))
 	} else if err != nil {
 		handleInternalServerError(w, err)
 	} else {
-		usernameJson, _ := json.Marshal(user.Username)
-		userIdJson, _ := json.Marshal(user.ID)
+		nameJson, _ := json.Marshal(student.Name)
+		prnJson, _ := json.Marshal(student.PRN)
 		w.Write([]byte("{\"online\":true,\"authenticated\":true," +
-			"\"username\":" + string(usernameJson) + ",\"userId\":" + string(userIdJson) + "}"))
+			"\"name\":" + string(nameJson) + ",\"prn\":" + string(prnJson) + "}"))
 	}
 }
 
 func LoginEndpoint(w http.ResponseWriter, r *http.Request) {
-	// Check the body for JSON containing username and password and return a token.
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, errorJson("Unable to read body!"), http.StatusBadRequest)
 		return
 	}
 	var data struct {
-		Username string `json:"username"`
+		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 	err = json.Unmarshal(body, &data)
-	if err != nil {
-		http.Error(w, errorJson("Unable to read body!"), http.StatusBadRequest)
-		return
-	} else if data.Username == "" || data.Password == "" {
-		http.Error(w, errorJson("No username or password provided!"), http.StatusBadRequest)
+	if err != nil || data.Email == "" || data.Password == "" {
+		http.Error(w, errorJson("Invalid email or password!"), http.StatusBadRequest)
 		return
 	}
-	var user User
-	err = findUserByNameOrEmailStmt.QueryRow(data.Username, data.Username).Scan(
-		&user.Username, &user.Password, &user.Email, &user.ID, &user.CreatedAt, &user.Verified)
+
+	var student Student
+	var hashedPassword string
+	var studentID uuid.UUID
+	err = findStudentByEmailStmt.QueryRow(data.Email).Scan(
+		&student.PRN,
+		&student.Name,
+		&hashedPassword,
+		&student.Email,
+		&student.ProgramCode,
+		&student.PhoneNo,
+		&studentID,
+	)
 	if err != nil && errors.Is(err, sql.ErrNoRows) {
-		http.Error(w, errorJson("No account with this username/email exists!"), http.StatusUnauthorized)
+		http.Error(w, errorJson("No student account with this email exists!"), http.StatusUnauthorized)
 		return
 	} else if err != nil {
 		handleInternalServerError(w, err)
 		return
-	} else if !user.Verified {
-		http.Error(w, errorJson("Your account is not verified yet!"), http.StatusForbidden)
-		return
-	} else if !ComparePassword(data.Password, user.Password) {
+	} else if !ComparePassword(data.Password, hashedPassword) {
 		http.Error(w, errorJson("Incorrect password!"), http.StatusUnauthorized)
 		return
 	}
+
 	tokenBytes := make([]byte, 64)
 	_, _ = rand.Read(tokenBytes)
 	token := hex.EncodeToString(tokenBytes)
-	result, err := insertTokenStmt.Exec(token, time.Now().UTC(), user.ID)
+
+	result, err := insertTokenStmt.Exec(token, time.Now().UTC(), studentID)
 	if err != nil {
 		handleInternalServerError(w, err)
 		return
 	} else if rows, err := result.RowsAffected(); err != nil || rows != 1 {
-		handleInternalServerError(w, err) // nil err solved by Ostrich algorithm
+		handleInternalServerError(w, err)
 		return
 	}
-	// Add cookie to browser.
+
 	http.SetCookie(w, &http.Cookie{
 		Name:     "token",
 		Value:    token,
@@ -121,10 +127,11 @@ func LoginEndpoint(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteStrictMode,
 		Path:     config.BasePath,
 	})
+
 	json.NewEncoder(w).Encode(struct {
-		Token    string `json:"token"`
-		Username string `json:"username"`
-	}{Token: token, Username: user.Username})
+		Token string `json:"token"`
+		Name  string `json:"name"`
+	}{Token: token, Name: student.Name})
 }
 
 func LogoutEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -134,8 +141,8 @@ func LogoutEndpoint(w http.ResponseWriter, r *http.Request) {
 			http.StatusUnauthorized)
 		return
 	}
-	var userID uuid.UUID
-	err := deleteTokenStmt.QueryRow(token).Scan(&userID)
+	var studentID uuid.UUID
+	err := deleteTokenStmt.QueryRow(token).Scan(&studentID)
 	if err == sql.ErrNoRows {
 		http.Error(w, errorJson("You are not authenticated to access this resource!"),
 			http.StatusUnauthorized)
@@ -144,7 +151,6 @@ func LogoutEndpoint(w http.ResponseWriter, r *http.Request) {
 		handleInternalServerError(w, err)
 		return
 	}
-	// Delete cookie on browser.
 	http.SetCookie(w, &http.Cookie{
 		Name:     "token",
 		Value:    "null",
