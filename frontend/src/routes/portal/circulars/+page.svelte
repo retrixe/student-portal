@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Box from '$lib/lunaria/Box.svelte'
   import dayjs from 'dayjs'
+  import { Box } from 'heliodor'
 
   interface CircularInfo {
     id: number

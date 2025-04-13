@@ -1,8 +1,6 @@
 <script lang="ts">
-  import Box from '$lib/lunaria/Box.svelte'
-  import Button from '$lib/lunaria/Button.svelte'
-  import ProgessBar from '$lib/lunaria/ProgessBar.svelte'
   import dayjs from 'dayjs'
+  import { Box, Button, ProgressBar } from 'heliodor'
   import { CheckCircle, WarningCircle, XCircle } from 'phosphor-svelte'
 
   const student = {
@@ -104,7 +102,7 @@
       {#each data.courseAttendance as subject (subject.courseCode)}
         <div class="attendance-indicator">
           <p>{subject.courseName}</p>
-          <ProgessBar
+          <ProgressBar
             percentage={calculateAttendance(subject.attendedClasses, subject.totalClasses)}
             color={getAttendanceColor(
               calculateAttendance(subject.attendedClasses, subject.totalClasses),

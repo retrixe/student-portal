@@ -1,6 +1,5 @@
 <script>
-  import Box from '$lib/lunaria/Box.svelte'
-  import Button from '$lib/lunaria/Button.svelte'
+  import { Box, Button } from 'heliodor'
   import { X } from 'phosphor-svelte'
 </script>
 

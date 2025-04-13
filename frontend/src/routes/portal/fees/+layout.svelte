@@ -1,7 +1,6 @@
 <script lang="ts">
-  import Box from '$lib/lunaria/Box.svelte'
-  import Tab from '$lib/lunaria/Tab.svelte'
-  import Tabs from '$lib/lunaria/Tabs.svelte'
+  import { page } from '$app/state'
+  import { Box, Tab, Tabs } from 'heliodor'
   import type { Snippet } from 'svelte'
 
   const { children }: { children: Snippet } = $props()
@@ -9,10 +8,10 @@
 
 <Box class="page-container">
   <Tabs>
-    <Tab href="/portal/fees">Pending Fees</Tab>
+    <Tab currentHref={page.route.id} href="/portal/fees">Pending Fees</Tab>
     <div style:flex="1"></div>
-    <Tab href="/portal/fees/cart">Cart (4)</Tab>
-    <Tab href="/portal/fees/receipts">Receipts</Tab>
+    <Tab currentHref={page.route.id} href="/portal/fees/cart">Cart (4)</Tab>
+    <Tab currentHref={page.route.id} href="/portal/fees/receipts">Receipts</Tab>
   </Tabs>
   <br />
   {@render children()}

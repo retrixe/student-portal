@@ -2305,6 +2305,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"heliodor@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "heliodor@npm:0.0.6"
+  peerDependencies:
+    svelte: ^5.0.0
+  checksum: 10c0/5cc5e781d79853bf4b8f3a3182339bc35b15e0ecc6704eacdcea815f82cba544d9ba9246ea85abe817e7e3b0d0b9c3b7c0ceaa4ba5abfb31fc4f0a55ae8e7abc
+  languageName: node
+  linkType: hard
+
 "http-cache-semantics@npm:^4.1.1":
   version: 4.1.1
   resolution: "http-cache-semantics@npm:4.1.1"
@@ -4136,6 +4145,7 @@ __metadata:
     eslint-plugin-promise: "npm:^7.2.1"
     eslint-plugin-svelte: "npm:^3.5.1"
     globals: "npm:^16.0.0"
+    heliodor: "npm:^0.0.6"
     husky: "npm:^9.1.7"
     ky: "npm:^1.8.0"
     phosphor-svelte: "npm:^3.0.1"

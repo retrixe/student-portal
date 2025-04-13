@@ -3,7 +3,7 @@
   import { page } from '$app/state'
   import type { Snippet } from 'svelte'
   import { onNavigate } from '$app/navigation'
-  import '$lib/lunaria/Baseline.scss'
+  import 'heliodor/Baseline.scss'
 
   const { children }: { children: Snippet } = $props()
   const { title, description, image, imageLarge, noIndex } = $derived(page.data)

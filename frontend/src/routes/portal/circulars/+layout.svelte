@@ -1,8 +1,6 @@
 <script lang="ts">
   import { page } from '$app/state'
-  import Box from '$lib/lunaria/Box.svelte'
-  import Tab from '$lib/lunaria/Tab.svelte'
-  import Tabs from '$lib/lunaria/Tabs.svelte'
+  import { Box, Tab, Tabs } from 'heliodor'
   import type { Snippet } from 'svelte'
 
   const { children }: { children: Snippet } = $props()
@@ -10,7 +8,7 @@
 
 <Box class="page-container">
   <Tabs>
-    <Tab href="/portal/circulars">
+    <Tab href="/portal/circulars" active={page.route.id === '/portal/circulars'}>
       {#if page.route.id === '/portal/circulars'}
         Circulars
       {:else}

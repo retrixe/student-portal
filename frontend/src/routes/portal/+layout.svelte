@@ -1,7 +1,6 @@
 <script lang="ts">
   import { invalidate } from '$app/navigation'
-  import Button from '$lib/lunaria/Button.svelte'
-  import NavigationRail from '$lib/lunaria/NavigationRail.svelte'
+  import { Button, NavigationRail } from 'heliodor'
   import ky from 'ky'
   import {
     CalendarDots,
