@@ -5,9 +5,9 @@
   import { Box } from 'heliodor'
 
   const { children }: { children: Snippet } = $props()
-  const { username } = $derived(page.data)
+  const { student } = $derived(page.data)
   $effect(() => {
-    if (username) goto('/portal').catch(console.error)
+    if (student) goto('/portal').catch(console.error)
   })
 </script>
 
