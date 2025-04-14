@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS students (
     phoneNo VARCHAR(100) NOT NULL,
     address VARCHAR(1000) NOT NULL,
     picture BLOB NOT NULL,
+    password VARCHAR(255) NOT NULL  -- Added password field
 );
 
 CREATE TABLE IF NOT EXISTS tokens (
@@ -173,12 +174,7 @@ var (
 )
 
 func PrepareSqlStatements() {
-	//findUserByTokenStmt = prepareQuery("SELECT username, password, email, prn, " +
-	//	"token, tokens.created_at FROM tokens " +
-	//	"JOIN students ON tokens.prn = students.prn WHERE token = ?;")
-	//findUserByNameOrEmailStmt = prepareQuery("SELECT username, password, email, prn, created_at " +
-	//	"WHERE username = ? OR email = ? LIMIT 1;")
-
+	findStudentByEmailStmt = prepareQuery("SELECT prn, password FROM students WHERE email = ?;")
 	insertTokenStmt = prepareQuery("INSERT INTO tokens (token, created_at, prn) VALUES (?, ?, ?);")
 	deleteTokenStmt = prepareQuery("DELETE FROM tokens WHERE token = ? RETURNING prn;")
 }
