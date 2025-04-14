@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS students (
     phoneNo VARCHAR(100) NOT NULL,
     address VARCHAR(1000) NOT NULL,
     picture BLOB NOT NULL,
+    password VARCHAR(255) NOT NULL  -- Added password field
 );
 
 CREATE TABLE IF NOT EXISTS tokens (
@@ -167,26 +168,31 @@ COMMIT;`); err != nil {
 var (
 	findStudentByTokenStmt *sql.Stmt
 	findStudentByEmailStmt *sql.Stmt
-
-	insertTokenStmt *sql.Stmt
-	deleteTokenStmt *sql.Stmt
+	insertTokenStmt        *sql.Stmt
+	deleteTokenStmt        *sql.Stmt
 )
 
 func PrepareSqlStatements() {
-	//findUserByTokenStmt = prepareQuery("SELECT username, password, email, prn, " +
-	//	"token, tokens.created_at FROM tokens " +
-	//	"JOIN students ON tokens.prn = students.prn WHERE token = ?;")
-	//findUserByNameOrEmailStmt = prepareQuery("SELECT username, password, email, prn, created_at " +
-	//	"WHERE username = ? OR email = ? LIMIT 1;")
+	findStudentByTokenStmt = prepareQuery(`
+		SELECT s.prn, s.name, s.email, s.programCode, s.phoneNo,
+		s.aadhaarNo, s.bloodGroup, s.dob, s.gender,
+		s.admissionDate, s.semester, s.address, s.picture, t.created_at
+		FROM students s
+		JOIN tokens t ON s.prn = t.prn
+		WHERE t.token = ?;
+	`)
+
+	findStudentByEmailStmt = prepareQuery("SELECT prn, password FROM students WHERE email = ?;")
 
 	insertTokenStmt = prepareQuery("INSERT INTO tokens (token, created_at, prn) VALUES (?, ?, ?);")
+
 	deleteTokenStmt = prepareQuery("DELETE FROM tokens WHERE token = ? RETURNING prn;")
 }
 
 func prepareQuery(query string) *sql.Stmt {
 	stmt, err := db.Prepare(query)
 	if err != nil {
-		log.Fatalln("failed to build SQL query:", query, err)
+		log.Fatalln("failed to prepare SQL query:", query, err)
 	}
 	return stmt
 }

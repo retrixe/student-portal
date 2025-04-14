@@ -9,8 +9,6 @@ import (
 	"io"
 	"net/http"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 var ErrNotAuthenticated = errors.New("request not authenticated")
@@ -33,23 +31,31 @@ func IsAuthenticated(token string) (*Student, *Token, error) {
 
 	student := Student{}
 	var tokenCreatedAt time.Time
-	var studentID uuid.UUID
+
 	err := findStudentByTokenStmt.QueryRow(token).Scan(
 		&student.PRN,
 		&student.Name,
 		&student.Email,
 		&student.ProgramCode,
 		&student.PhoneNo,
-		&studentID,
+		&student.AadhaarNo,
+		&student.BloodGroup,
+		&student.DOB,
+		&student.Gender,
+		&student.AdmissionDate,
+		&student.Semester,
+		&student.Address,
+		&student.Picture,
 		&tokenCreatedAt,
 	)
+
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil, ErrNotAuthenticated
 	} else if err != nil {
 		return nil, nil, err
-	} else {
-		return &student, &Token{CreatedAt: tokenCreatedAt, Token: token, UserID: studentID}, nil
 	}
+
+	return &student, &Token{CreatedAt: tokenCreatedAt, Token: token}, nil
 }
 
 func StatusEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -59,10 +65,16 @@ func StatusEndpoint(w http.ResponseWriter, r *http.Request) {
 	} else if err != nil {
 		handleInternalServerError(w, err)
 	} else {
-		nameJson, _ := json.Marshal(student.Name)
-		prnJson, _ := json.Marshal(student.PRN)
-		w.Write([]byte("{\"online\":true,\"authenticated\":true," +
-			"\"name\":" + string(nameJson) + ",\"prn\":" + string(prnJson) + "}"))
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(struct {
+			Online        bool    `json:"online"`
+			Authenticated bool    `json:"authenticated"`
+			Student       Student `json:"student"`
+		}{
+			Online:        true,
+			Authenticated: true,
+			Student:       *student,
+		})
 	}
 }
 
@@ -84,15 +96,10 @@ func LoginEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	var student Student
 	var hashedPassword string
-	var studentID uuid.UUID
+
 	err = findStudentByEmailStmt.QueryRow(data.Email).Scan(
 		&student.PRN,
-		&student.Name,
 		&hashedPassword,
-		&student.Email,
-		&student.ProgramCode,
-		&student.PhoneNo,
-		&studentID,
 	)
 	if err != nil && errors.Is(err, sql.ErrNoRows) {
 		http.Error(w, errorJson("No student account with this email exists!"), http.StatusUnauthorized)
@@ -109,7 +116,7 @@ func LoginEndpoint(w http.ResponseWriter, r *http.Request) {
 	_, _ = rand.Read(tokenBytes)
 	token := hex.EncodeToString(tokenBytes)
 
-	result, err := insertTokenStmt.Exec(token, time.Now().UTC(), studentID)
+	result, err := insertTokenStmt.Exec(token, time.Now().UTC(), student.PRN)
 	if err != nil {
 		handleInternalServerError(w, err)
 		return
@@ -130,8 +137,8 @@ func LoginEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(struct {
 		Token string `json:"token"`
-		Name  string `json:"name"`
-	}{Token: token, Name: student.Name})
+		PRN   int64  `json:"prn"`
+	}{Token: token, PRN: student.PRN})
 }
 
 func LogoutEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -141,8 +148,8 @@ func LogoutEndpoint(w http.ResponseWriter, r *http.Request) {
 			http.StatusUnauthorized)
 		return
 	}
-	var studentID uuid.UUID
-	err := deleteTokenStmt.QueryRow(token).Scan(&studentID)
+	var prn int64
+	err := deleteTokenStmt.QueryRow(token).Scan(&prn)
 	if err == sql.ErrNoRows {
 		http.Error(w, errorJson("You are not authenticated to access this resource!"),
 			http.StatusUnauthorized)
@@ -151,6 +158,7 @@ func LogoutEndpoint(w http.ResponseWriter, r *http.Request) {
 		handleInternalServerError(w, err)
 		return
 	}
+
 	http.SetCookie(w, &http.Cookie{
 		Name:     "token",
 		Value:    "null",

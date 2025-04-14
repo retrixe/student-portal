@@ -2,14 +2,12 @@ package main
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Token struct {
 	CreatedAt time.Time `json:"createdAt"`
 	Token     string    `json:"token"`
-	UserID    uuid.UUID `json:"userId"`
+	PRN       int64     `json:"prn"`
 }
 
 type Student struct {
