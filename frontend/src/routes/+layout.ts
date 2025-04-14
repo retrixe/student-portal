@@ -1,5 +1,5 @@
+import type { Student } from '$lib/api/entities/Student'
 import ky from '$lib/api/ky'
-import type { Student } from 'phosphor-svelte'
 import type { LayoutLoad } from './$types'
 
 export const load: LayoutLoad = async event => {

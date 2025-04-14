@@ -1,15 +1,11 @@
 <script lang="ts">
+  import { page } from '$app/state'
+  import type { Student } from '$lib/api/entities/Student'
   import dayjs from 'dayjs'
   import { Box, Button, ProgressBar } from 'heliodor'
   import { CheckCircle, WarningCircle, XCircle } from 'phosphor-svelte'
 
-  const student = {
-    image: 'https://github.com/retrixe.png',
-    name: 'Ibrahim Ansari',
-    prn: '3929303209',
-    semester: 4,
-    branch: 'B.Tech CSE',
-  }
+  const { student } = $derived(page.data) as { student: Student }
 
   interface LandingData {
     totalAttendance: number
@@ -82,12 +78,12 @@
     </Box>
   {:then data}
     <Box class="card header">
-      <img class="user-avatar" src={student.image} alt="logo" />
+      <img class="user-avatar" src={`data:image/png;base64,${student.picture}`} alt="logo" />
       <div>
         <h1>{student.name}</h1>
         <h3>PRN {student.prn}</h3>
         <h4>Semester {student.semester}</h4>
-        <h4>{student.branch}</h4>
+        <h4>{student.programCode}</h4>
       </div>
     </Box>
 
