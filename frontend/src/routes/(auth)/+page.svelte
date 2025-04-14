@@ -13,9 +13,7 @@
   async function onLogin() {
     disabled = true
     try {
-      const res = await ky
-        .post(`api/login`, { json: login })
-        .json<{ token: string; username: string }>()
+      const res = await ky.post(`api/login`, { json: login }).json<{ token: string; prn: number }>()
       localStorage.setItem('student-portal:token', res.token)
       error = ''
     } catch (e: unknown) {

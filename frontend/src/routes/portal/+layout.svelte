@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { invalidate } from '$app/navigation'
+  import { goto, invalidate } from '$app/navigation'
+  import { page } from '$app/state'
   import { Button, NavigationRail } from 'heliodor'
   import ky from 'ky'
   import {
@@ -14,9 +15,9 @@
   import type { Snippet } from 'svelte'
 
   const { children }: { children: Snippet } = $props()
-  // const { username } = $derived(page.data)
+  const { student } = $derived(page.data)
   $effect(() => {
-    // TODO: if (!username) goto('/').catch(console.error)
+    if (!student) goto('/').catch(console.error)
   })
 
   async function logout(event: Event) {

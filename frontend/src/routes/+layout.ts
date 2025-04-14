@@ -1,4 +1,5 @@
 import ky from '$lib/api/ky'
+import type { Student } from 'phosphor-svelte'
 import type { LayoutLoad } from './$types'
 
 export const load: LayoutLoad = async event => {
@@ -9,8 +10,8 @@ export const load: LayoutLoad = async event => {
 
   // Ignore errors trying to check for authentication state
   try {
-    const req = await ky('', { fetch }).json<{ userId?: string; username?: string }>()
-    return { username: req.username, userId: req.userId }
+    const req = await ky('', { fetch }).json<{ student?: Student }>()
+    return { student: req.student }
   } catch (e) {
     console.error(e)
   }
