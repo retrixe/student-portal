@@ -4,7 +4,7 @@
   import ky from '$lib/api/ky'
   import { Button, TextInput } from 'heliodor'
 
-  let login = $state({ username: '', password: '' })
+  let login = $state({ email: '', password: '' })
   let disabled = $state(false)
   let error: string | null = $state(null)
 
@@ -29,10 +29,10 @@
 <img class="center logo" src="/favicon.png" alt="Logo" />
 <h2 class="center">Login to My {PUBLIC_COLLEGE_NAME}</h2>
 <div class="spacer"></div>
-<label for="login-username">E-mail / Username</label>
+<label for="login-email">E-mail</label>
 <TextInput
-  id="login-username"
-  bind:value={login.username}
+  id="login-email"
+  bind:value={login.email}
   oninput={clearError}
   error={!!error}
   {disabled}
