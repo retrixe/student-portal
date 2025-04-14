@@ -166,31 +166,33 @@ COMMIT;`); err != nil {
 }
 
 var (
-	findStudentByTokenStmt = prepareQuery(`
-	SELECT s.prn, s.name, s.email, s.programCode, s.phoneNo,
-	       s.aadhaarNo, s.bloodGroup, s.dob, s.gender,
-	       s.admissionDate, s.semester, s.address, s.picture, t.created_at
-	FROM students s
-	JOIN tokens t ON s.prn = t.prn
-	WHERE t.token = ?;
-`)
-
+	findStudentByTokenStmt *sql.Stmt
 	findStudentByEmailStmt *sql.Stmt
-
-	insertTokenStmt *sql.Stmt
-	deleteTokenStmt *sql.Stmt
+	insertTokenStmt        *sql.Stmt
+	deleteTokenStmt        *sql.Stmt
 )
 
 func PrepareSqlStatements() {
+	findStudentByTokenStmt = prepareQuery(`
+		SELECT s.prn, s.name, s.email, s.programCode, s.phoneNo,
+		s.aadhaarNo, s.bloodGroup, s.dob, s.gender,
+		s.admissionDate, s.semester, s.address, s.picture, t.created_at
+		FROM students s
+		JOIN tokens t ON s.prn = t.prn
+		WHERE t.token = ?;
+	`)
+
 	findStudentByEmailStmt = prepareQuery("SELECT prn, password FROM students WHERE email = ?;")
+
 	insertTokenStmt = prepareQuery("INSERT INTO tokens (token, created_at, prn) VALUES (?, ?, ?);")
+
 	deleteTokenStmt = prepareQuery("DELETE FROM tokens WHERE token = ? RETURNING prn;")
 }
 
 func prepareQuery(query string) *sql.Stmt {
 	stmt, err := db.Prepare(query)
 	if err != nil {
-		log.Fatalln("failed to build SQL query:", query, err)
+		log.Fatalln("failed to prepare SQL query:", query, err)
 	}
 	return stmt
 }
