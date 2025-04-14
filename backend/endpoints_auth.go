@@ -31,21 +31,31 @@ func IsAuthenticated(token string) (*Student, *Token, error) {
 
 	student := Student{}
 	var tokenCreatedAt time.Time
+
 	err := findStudentByTokenStmt.QueryRow(token).Scan(
 		&student.PRN,
 		&student.Name,
 		&student.Email,
 		&student.ProgramCode,
 		&student.PhoneNo,
+		&student.AadhaarNo,
+		&student.BloodGroup,
+		&student.DOB,
+		&student.Gender,
+		&student.AdmissionDate,
+		&student.Semester,
+		&student.Address,
+		&student.Picture,
 		&tokenCreatedAt,
 	)
+
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil, ErrNotAuthenticated
 	} else if err != nil {
 		return nil, nil, err
-	} else {
-		return &student, &Token{CreatedAt: tokenCreatedAt, Token: token}, nil
 	}
+
+	return &student, &Token{CreatedAt: tokenCreatedAt, Token: token}, nil
 }
 
 func StatusEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -91,7 +101,6 @@ func LoginEndpoint(w http.ResponseWriter, r *http.Request) {
 		&student.PRN,
 		&hashedPassword,
 	)
-
 	if err != nil && errors.Is(err, sql.ErrNoRows) {
 		http.Error(w, errorJson("No student account with this email exists!"), http.StatusUnauthorized)
 		return
@@ -108,7 +117,6 @@ func LoginEndpoint(w http.ResponseWriter, r *http.Request) {
 	token := hex.EncodeToString(tokenBytes)
 
 	result, err := insertTokenStmt.Exec(token, time.Now().UTC(), student.PRN)
-
 	if err != nil {
 		handleInternalServerError(w, err)
 		return
@@ -142,7 +150,6 @@ func LogoutEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 	var prn int64
 	err := deleteTokenStmt.QueryRow(token).Scan(&prn)
-
 	if err == sql.ErrNoRows {
 		http.Error(w, errorJson("You are not authenticated to access this resource!"),
 			http.StatusUnauthorized)
@@ -151,6 +158,7 @@ func LogoutEndpoint(w http.ResponseWriter, r *http.Request) {
 		handleInternalServerError(w, err)
 		return
 	}
+
 	http.SetCookie(w, &http.Cookie{
 		Name:     "token",
 		Value:    "null",

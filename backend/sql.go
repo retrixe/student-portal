@@ -166,7 +166,15 @@ COMMIT;`); err != nil {
 }
 
 var (
-	findStudentByTokenStmt *sql.Stmt
+	findStudentByTokenStmt = prepareQuery(`
+	SELECT s.prn, s.name, s.email, s.programCode, s.phoneNo,
+	       s.aadhaarNo, s.bloodGroup, s.dob, s.gender,
+	       s.admissionDate, s.semester, s.address, s.picture, t.created_at
+	FROM students s
+	JOIN tokens t ON s.prn = t.prn
+	WHERE t.token = ?;
+`)
+
 	findStudentByEmailStmt *sql.Stmt
 
 	insertTokenStmt *sql.Stmt

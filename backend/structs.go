@@ -13,15 +13,15 @@ type Token struct {
 type Student struct {
 	PRN           int64     `json:"prn"`
 	Name          string    `json:"name"`
-	AadhaarNo     string    `json:"aadhaarNo"`
-	BloodGroup    string    `json:"bloodGroup"`
+	Email         string    `json:"email"`
+	ProgramCode   string    `json:"program_code"`
+	PhoneNo       string    `json:"phone_no"`
+	AadhaarNo     string    `json:"aadhaar_no"`
+	BloodGroup    string    `json:"blood_group"`
 	DOB           time.Time `json:"dob"`
 	Gender        string    `json:"gender"`
-	AdmissionDate time.Time `json:"admissionDate"`
+	AdmissionDate time.Time `json:"admission_date"`
 	Semester      int       `json:"semester"`
-	Email         string    `json:"email"`
-	ProgramCode   string    `json:"programCode"`
-	PhoneNo       string    `json:"phoneNo"`
 	Address       string    `json:"address"`
 	Picture       []byte    `json:"picture"`
 }
