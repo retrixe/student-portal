@@ -2,7 +2,7 @@
   import { goto, invalidate } from '$app/navigation'
   import { page } from '$app/state'
   import { Button, NavigationRail } from 'heliodor'
-  import ky from 'ky'
+  import ky from '$lib/api/ky'
   import {
     CalendarDots,
     CalendarX,
@@ -16,7 +16,7 @@
 
   const { children }: { children: Snippet } = $props()
   const { student } = $derived(page.data)
-  $effect(() => {
+  $effect.pre(() => {
     if (!student) goto('/').catch(console.error)
   })
 
