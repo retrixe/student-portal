@@ -2,22 +2,22 @@
   import dayjs from 'dayjs'
   import { Box } from 'heliodor'
 
-  interface CircularInfo {
+  interface ServiceRequestInfo {
     id: number
     date: string
     subject: string
   }
 
-  const request: Promise<CircularInfo[]> = Promise.resolve([
+  const request: Promise<ServiceRequestInfo[]> = Promise.resolve([
     {
       id: 1,
       date: '2023-10-01',
-      subject: 'Update on Tuition Fee',
+      subject: 'Tuition Fee',
     },
     {
       id: 2,
       date: '2023-10-01',
-      subject: 'Attendance Criteria Update',
+      subject: 'Library Fee',
     },
   ])
 
@@ -38,21 +38,23 @@
       </thead>
       <tbody>
         {#if data.length}
-          {#each data as circular (circular.id)}
+          {#each data as serviceRequest (serviceRequest.id)}
             <tr class="item">
               <td class="id-cells">
-                <a href={`/portal/circulars/${circular.id}`}>{circular.id}</a>
+                <a href={`/portal/service-requests/${serviceRequest.id}`}>{serviceRequest.id}</a>
               </td>
               <td>
-                <a href={`/portal/circulars/${circular.id}`}>{circular.subject}</a>
+                <a href={`/portal/service-requests/${serviceRequest.id}`}>
+                  {serviceRequest.subject}
+                </a>
               </td>
-              <td class="date-cells">{formatDateTime(circular.date)}</td>
+              <td class="date-cells">{formatDateTime(serviceRequest.date)}</td>
             </tr>
           {/each}
         {:else}
           <tr>
             <td colspan="3" style="text-align: center">
-              <h3>No circulars available</h3>
+              <h3>No service requests available</h3>
             </td>
           </tr>
         {/if}
