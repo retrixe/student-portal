@@ -29,5 +29,8 @@
   :global(.page-container) {
     flex: 1;
     margin: 24px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
   }
 </style>
