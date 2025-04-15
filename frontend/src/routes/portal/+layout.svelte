@@ -46,7 +46,7 @@
         <EnvelopeSimple weight="bold" size="24px" /> Profile
       </Button>
     </a>
-    <a href="/portal/holidays-and-events">
+    <a href="/portal/calendar/holidays">
       <Button>
         <CalendarDots weight="bold" size="24px" /> Holidays & Events
       </Button>
