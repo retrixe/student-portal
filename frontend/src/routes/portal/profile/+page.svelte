@@ -39,6 +39,9 @@
     <br />
     <h3>Admission Date</h3>
     <p>{dayjs(student.admissionDate).format('DD/MM/YYYY')}</p>
+    <br />
+    <h3>Address</h3>
+    <p>{student.address}</p>
   </Box>
 </div>
 
