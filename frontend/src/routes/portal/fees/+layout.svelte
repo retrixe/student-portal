@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/state'
+  import feeCart from '$lib/state/fees.svelte'
   import { Box, Tab, Tabs } from 'heliodor'
   import type { Snippet } from 'svelte'
 
@@ -10,7 +11,7 @@
   <Tabs>
     <Tab currentHref={page.route.id} href="/portal/fees">Pending Fees</Tab>
     <div style:flex="1"></div>
-    <Tab currentHref={page.route.id} href="/portal/fees/cart">Cart (4)</Tab>
+    <Tab currentHref={page.route.id} href="/portal/fees/cart">Cart ({feeCart.size})</Tab>
     <Tab currentHref={page.route.id} href="/portal/fees/receipts">Receipts</Tab>
   </Tabs>
   <br />

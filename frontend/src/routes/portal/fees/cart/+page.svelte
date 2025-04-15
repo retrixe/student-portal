@@ -1,6 +1,26 @@
-<script>
+<script lang="ts">
+  import feeCart from '$lib/state/fees.svelte'
   import { Box, Button } from 'heliodor'
   import { X } from 'phosphor-svelte'
+
+  interface InstallmentInfo {
+    type: string
+    amount: number
+    dueDate: string
+  }
+
+  const installments: Record<number, InstallmentInfo> = {
+    1: {
+      type: 'Installment 1',
+      amount: 100000,
+      dueDate: '2024-02-12',
+    },
+    2: {
+      type: 'Installment 2',
+      amount: 100000,
+      dueDate: '2024-08-12',
+    },
+  }
 </script>
 
 <Box>
@@ -14,28 +34,23 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="item">
-        <td class="action-cells">
-          <Button class="remove-btn"><X weight="bold" size="24px" /></Button>
-        </td>
-        <td>Tuition Fee</td>
-        <td>2023-10-01</td>
-        <td>₹ 50,000</td>
-      </tr>
-      <tr class="item">
-        <td class="action-cells">
-          <Button class="remove-btn"><X weight="bold" size="24px" /></Button>
-        </td>
-        <td>Library Fee</td>
-        <td>2023-10-01</td>
-        <td>₹ 1,000</td>
-      </tr>
-      <!-- Add more rows as needed -->
+      {#each feeCart as fee (fee)}
+        <tr class="item">
+          <td class="action-cells">
+            <Button onclick={() => feeCart.delete(fee)} class="remove-btn">
+              <X weight="bold" size="24px" />
+            </Button>
+          </td>
+          <td>{installments[fee].type}</td>
+          <td>{installments[fee].dueDate}</td>
+          <td>{installments[fee].amount}</td>
+        </tr>
+      {/each}
     </tbody>
     <tfoot>
       <tr>
         <td colspan="3">Total</td>
-        <td>₹ 51,000</td>
+        <td>₹ {feeCart.values().reduce((total, fee) => total + installments[fee].amount, 0)}</td>
       </tr>
     </tfoot>
   </table>
