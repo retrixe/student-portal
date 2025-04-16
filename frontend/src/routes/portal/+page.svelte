@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state'
   import type { Student } from '$lib/api/entities/Student'
+  import { fetchLandingData } from '$lib/api/mock'
   import dayjs from 'dayjs'
   import { Box, Button, ProgressBar } from 'heliodor'
   import { CheckCircle, WarningCircle, XCircle } from 'phosphor-svelte'
@@ -27,26 +28,7 @@
     }[]
   }
 
-  const request: Promise<LandingData> = Promise.resolve({
-    totalAttendance: 75,
-    courseAttendance: [
-      {
-        courseCode: 'DAA',
-        courseName: 'Design and Analysis of Algorithms',
-        totalClasses: 20,
-        attendedClasses: 15,
-      },
-    ],
-    pendingFees: {
-      totalAmount: 300000,
-      dueDate: '2025-05-12',
-    },
-    holidays: [
-      { name: 'Hackathon', start: '2024-02-12', end: '2024-02-14', type: 'national' },
-      { name: 'Project Submission', start: '2024-02-20', end: '2024-02-20', type: 'national' },
-      { name: 'Mid Sem Exams', start: '2024-02-25', end: '2024-02-25', type: 'national' },
-    ],
-  })
+  const request: Promise<LandingData> = fetchLandingData()
 
   const formatNumber = (n: number) =>
     n.toLocaleString('en-IN', {
@@ -151,7 +133,7 @@
     </Box>
 
     <Box class="card">
-      <h1>Upcoming Holidays</h1>
+      <h1>Upcoming Holidays / Events</h1>
       <br />
       {@const upcomingHolidays = data.holidays.filter(holiday => {
         const timeDifference = new Date(holiday.start).getTime() - Date.now()

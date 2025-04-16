@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fetchEventInfo } from '$lib/api/mock'
   import dayjs from 'dayjs'
   import { Box } from 'heliodor'
 
@@ -9,11 +10,7 @@
     type: string
   }
 
-  const request: Promise<EventInfo[]> = Promise.resolve([
-    { name: 'Hackathon', start: '2024-02-12', end: '2024-02-14', type: 'National' },
-    { name: 'Project Submission', start: '2024-02-20', end: '2024-02-20', type: 'National' },
-    { name: 'Mid Sem Exams', start: '2024-02-25', end: '2024-02-25', type: 'National' },
-  ])
+  const request: Promise<EventInfo[]> = fetchEventInfo()
 
   // FIXME: dayjs being used in a lot of places in the same way
   const formatDateRange = (start: string, end: string) => {

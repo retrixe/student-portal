@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fetchServiceRequests } from '$lib/api/mock'
   import dayjs from 'dayjs'
   import { Box } from 'heliodor'
 
@@ -8,18 +9,7 @@
     subject: string
   }
 
-  const request: Promise<ServiceRequestInfo[]> = Promise.resolve([
-    {
-      id: 1,
-      date: '2023-10-01',
-      subject: 'Tuition Fee',
-    },
-    {
-      id: 2,
-      date: '2023-10-01',
-      subject: 'Library Fee',
-    },
-  ])
+  const request: Promise<ServiceRequestInfo[]> = fetchServiceRequests()
 
   const formatDateTime = (date: string) => dayjs(date).format('MMM D, YYYY h:mm A')
 </script>

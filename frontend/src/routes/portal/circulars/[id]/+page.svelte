@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fetchCircular } from '$lib/api/mock'
   import dayjs from 'dayjs'
   import { Box } from 'heliodor'
 
@@ -9,12 +10,7 @@
     description: string
   }
 
-  const request: Promise<Circular> = Promise.resolve({
-    id: 1,
-    date: '2023-10-01',
-    subject: 'Tuition Fee',
-    description: 'This is a circular regarding the tuition fee for the semester.',
-  })
+  const request: Promise<Circular> = fetchCircular()
 
   const formatDateTime = (date: string) => dayjs(date).format('MMM D, YYYY h:mm A')
 </script>

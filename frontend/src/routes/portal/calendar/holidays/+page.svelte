@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fetchHolidayInfo } from '$lib/api/mock'
   import dayjs from 'dayjs'
   import { Box } from 'heliodor'
 
@@ -9,26 +10,7 @@
     type: string
   }
 
-  const request: Promise<HolidayInfo[]> = Promise.resolve([
-    {
-      name: 'Diwali',
-      start: '2023-10-01',
-      end: '2023-10-05',
-      type: 'National',
-    },
-    {
-      name: 'Christmas',
-      start: '2023-12-24',
-      end: '2023-12-26',
-      type: 'National',
-    },
-    {
-      name: 'New Year',
-      start: '2024-01-01',
-      end: '2024-01-02',
-      type: 'National',
-    },
-  ])
+  const request: Promise<HolidayInfo[]> = fetchHolidayInfo()
 
   // FIXME: dayjs being used in a lot of places in the same way
   const formatDateRange = (start: string, end: string) => {
